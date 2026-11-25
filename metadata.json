@@ -1,0 +1,6 @@
+{
+  "name": "HomeRemedySteps — Natural Home Remedies, Step-by-Step Guides & Static Visuals",
+  "description": "42 natural home remedies and household cleaning solutions with step-by-step ratios, clear safety cautions, static SVG diagrams, and ingredient filtering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
