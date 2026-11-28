@@ -1,6 +1,11 @@
 import React, {useState} from 'react';
 import {AlertTriangle, ChevronDown, ExternalLink, ShieldCheck} from 'lucide-react';
+import {
+  AMAZON_AFFILIATE_LINK_PROPS,
+  enforceAmazonEsAffiliateUrl,
+} from '../config/affiliate';
 import {UiDictionary} from '../data/i18n';
+import {ProductThumbnail} from './ProductThumbnail';
 
 interface EditorialSafetySectionProps {
   ui: UiDictionary;
@@ -16,7 +21,7 @@ export const EditorialSafetySection: React.FC<EditorialSafetySectionProps> = ({u
         aria-labelledby="gear-heading"
         className="rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8"
       >
-        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-5 flex flex-col gap-2 border-b border-slate-200 pb-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2
               id="gear-heading"
@@ -26,32 +31,46 @@ export const EditorialSafetySection: React.FC<EditorialSafetySectionProps> = ({u
             </h2>
             <p className="mt-1 max-w-2xl text-sm text-slate-600">{ui.gearSubheading}</p>
           </div>
-          <p className="text-xs text-slate-500">{ui.gearDisclosure}</p>
+          <p className="max-w-md text-xs leading-relaxed text-slate-500">
+            {ui.gearDisclosure}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {ui.gearItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              target="_blank"
-              rel="sponsored nofollow noopener"
-              className="group flex flex-col justify-between rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-colors duration-150 hover:border-emerald-700/40 hover:bg-emerald-50/30"
-            >
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900 group-hover:text-emerald-800">
-                  {item.name}
-                </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
-                  {item.useCase}
-                </p>
-              </div>
-              <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 whitespace-nowrap">
-                {item.cta}
-                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
-            </a>
-          ))}
+          {ui.gearItems.map((item) => {
+            const safeHref = enforceAmazonEsAffiliateUrl(item.href);
+            return (
+              <a
+                key={item.id}
+                href={safeHref}
+                {...AMAZON_AFFILIATE_LINK_PROPS}
+                className="group flex flex-col justify-between overflow-hidden rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3.5 transition-colors duration-150 hover:border-emerald-700/40 hover:bg-emerald-50/25"
+              >
+                <div>
+                  <div className="aspect-[4/3] w-full overflow-hidden rounded-lg border border-slate-200/80 bg-white">
+                    <ProductThumbnail
+                      src={item.imageSrc}
+                      alt={item.name}
+                      className="h-full w-full transition-transform duration-200 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <p className="mt-3 text-[11px] font-semibold tracking-wide text-[#B45309]">
+                    Amazon.es
+                  </p>
+                  <h3 className="mt-0.5 text-sm font-semibold leading-snug text-slate-900 group-hover:text-emerald-800">
+                    {item.name}
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
+                    {item.useCase}
+                  </p>
+                </div>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 whitespace-nowrap">
+                  <span>{item.cta}</span>
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                </span>
+              </a>
+            );
+          })}
         </div>
       </section>
 

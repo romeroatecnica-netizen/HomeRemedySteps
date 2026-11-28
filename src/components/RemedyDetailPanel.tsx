@@ -5,12 +5,19 @@ import {
   Check,
   CheckCircle2,
   Copy,
+  ExternalLink,
   Printer,
   RotateCcw,
 } from 'lucide-react';
+import {
+  AMAZON_AFFILIATE_LINK_PROPS,
+  enforceAmazonEsAffiliateUrl,
+  getContextualAffiliateProductIds,
+} from '../config/affiliate';
 import {getCanonicalUrl} from '../config/seo';
 import {UiDictionary} from '../data/i18n';
 import {LangCode, RemedyModule, UserRemedyNote} from '../types/remedy';
+import {ProductThumbnail} from './ProductThumbnail';
 import {RemedyIllustrationCard} from './RemedyIllustrationCard';
 
 interface RemedyDetailPanelProps {
@@ -45,6 +52,10 @@ export const RemedyDetailPanel: React.FC<RemedyDetailPanelProps> = ({
   const stepLines = lang === 'es' ? remedy.steps.es : remedy.steps.en;
   const cautionText = lang === 'es' ? remedy.caution.es : remedy.caution.en;
   const checkedSteps = userNote.checkedSteps ?? [];
+  const contextualIds = getContextualAffiliateProductIds(remedy, 2);
+  const contextualGear = contextualIds
+    .map((id) => ui.gearItems.find((item) => item.id === id))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   const handleCopyCanonicalLink = async () => {
     const url = getCanonicalUrl(lang, remedy.slug);
@@ -270,6 +281,59 @@ export const RemedyDetailPanel: React.FC<RemedyDetailPanelProps> = ({
           className="mt-2 w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:border-emerald-700 focus:bg-white focus:outline-none"
         />
       </div>
+
+      {/* Contextual Amazon.es Product Thumbnails (hidden on print) */}
+      {contextualGear.length > 0 && (
+        <aside
+          aria-label={ui.contextualGearTitle}
+          className="no-print mt-6 border-t border-slate-200 pt-5"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className="font-display text-sm font-semibold text-slate-900">
+              {ui.contextualGearTitle}
+            </h3>
+            <span className="text-[11px] font-medium text-[#B45309]">Amazon.es</span>
+          </div>
+
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {contextualGear.map((item) => {
+              const safeHref = enforceAmazonEsAffiliateUrl(item.href);
+              return (
+                <a
+                  key={item.id}
+                  href={safeHref}
+                  {...AMAZON_AFFILIATE_LINK_PROPS}
+                  className="group flex items-center gap-3.5 rounded-xl border border-slate-200 bg-[#F8FAFC] p-2.5 transition-colors duration-150 hover:border-emerald-700/40 hover:bg-emerald-50/25"
+                >
+                  <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg border border-slate-200/80 bg-white">
+                    <ProductThumbnail
+                      src={item.imageSrc}
+                      alt={item.name}
+                      className="h-full w-full transition-transform duration-200 group-hover:scale-[1.04]"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate text-xs font-semibold text-slate-900 group-hover:text-emerald-800">
+                      {item.name}
+                    </h4>
+                    <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-slate-600">
+                      {item.useCase}
+                    </p>
+                    <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
+                      <span>{item.cta}</span>
+                      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+
+          <p className="mt-2.5 text-[11px] leading-relaxed text-slate-500">
+            {ui.gearDisclosure}
+          </p>
+        </aside>
+      )}
     </article>
   );
 };

@@ -1,4 +1,14 @@
+import {AFFILIATE_PRODUCT_CATALOG, AffiliateProductId} from '../config/affiliate';
 import {CategoryId, FaqItem, IngredientId, LangCode, ScopeType} from '../types/remedy';
+
+export interface GearItemEntry {
+  id: AffiliateProductId;
+  name: string;
+  useCase: string;
+  cta: string;
+  href: string;
+  imageSrc: string;
+}
 
 export interface UiDictionary {
   metaTitle: string;
@@ -50,6 +60,7 @@ export interface UiDictionary {
   gearHeading: string;
   gearSubheading: string;
   gearDisclosure: string;
+  contextualGearTitle: string;
   editorialTitle: string;
   editorialSubtitle: string;
   safetyCriteriaTitle: string;
@@ -65,21 +76,25 @@ export interface UiDictionary {
   categories: Record<CategoryId, string>;
   scopes: Record<ScopeType, string>;
   ingredients: Record<IngredientId, string>;
-  gearItems: {
-    name: string;
-    useCase: string;
-    cta: string;
-    href: string;
-  }[];
+  gearItems: GearItemEntry[];
 }
 
-const GEAR_BASE_LINKS = {
-  amberBottles: 'https://www.amazon.com/s?k=amber+glass+spray+bottles+16oz&tag=homeremedysteps-20',
-  teaInfuser: 'https://www.amazon.com/s?k=stainless+steel+mesh+tea+infuser&tag=homeremedysteps-20',
-  aloeGel: 'https://www.amazon.com/s?k=pure+organic+aloe+vera+gel&tag=homeremedysteps-20',
-  citricAcid: 'https://www.amazon.com/s?k=food+grade+citric+acid+baking+soda&tag=homeremedysteps-20',
-  microfiber: 'https://www.amazon.com/s?k=lint+free+microfiber+cleaning+cloths&tag=homeremedysteps-20',
-};
+function makeGearItem(
+  id: AffiliateProductId,
+  name: string,
+  useCase: string,
+  cta: string,
+): GearItemEntry {
+  const spec = AFFILIATE_PRODUCT_CATALOG[id];
+  return {
+    id,
+    name,
+    useCase,
+    cta,
+    href: spec.href,
+    imageSrc: spec.imageSrc,
+  };
+}
 
 export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
   en: {
@@ -135,7 +150,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     gearHeading: 'Practical Home Apothecary & Cleaning Essentials',
     gearSubheading:
       'Reusable tools and staple ingredients that simplify safe dilutions, infusions, and surface care.',
-    gearDisclosure: 'Affiliate links (rel="sponsored nofollow noopener") help support free guides.',
+    gearDisclosure:
+      'Affiliate Disclosure: As an Amazon Spain Associate (amazon.es, tag=bastelar-21), we earn from qualifying purchases at no extra cost to you.',
+    contextualGearTitle: 'Suggested Reusable Tools for This Guide (Amazon.es)',
     editorialTitle: 'Safe Home Remedies & Household Compatibility Guide',
     editorialSubtitle:
       'Responsible criteria for mild everyday comfort and non-reactive household cleaning without unnecessary risks.',
@@ -221,36 +238,36 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'Ice / Water',
     },
     gearItems: [
-      {
-        name: 'Amber Glass Spray Bottles (500 ml)',
-        useCase: 'Safe storage for diluted vinegar glass spray and fabric mists',
-        cta: 'View option',
-        href: GEAR_BASE_LINKS.amberBottles,
-      },
-      {
-        name: 'Fine-Mesh Stainless Tea Infuser',
-        useCase: 'Steeping fresh ginger slices and dried chamomile cleanly',
-        cta: 'View option',
-        href: GEAR_BASE_LINKS.teaInfuser,
-      },
-      {
-        name: 'Pure Unscented Aloe Vera Gel',
-        useCase: 'Alcohol-free soothing gel for mild sun warmth and razor irritation',
-        cta: 'View option',
-        href: GEAR_BASE_LINKS.aloeGel,
-      },
-      {
-        name: 'Food-Grade Citric Acid & Baking Soda',
-        useCase: 'Odorless kettle descaling and gentle burnt-pan soaking',
-        cta: 'View option',
-        href: GEAR_BASE_LINKS.citricAcid,
-      },
-      {
-        name: 'Lint-Free Microfiber Cloths',
-        useCase: 'Streak-free mirror buffing and gentle stain blotting',
-        cta: 'View option',
-        href: GEAR_BASE_LINKS.microfiber,
-      },
+      makeGearItem(
+        'amberBottles',
+        'Amber Glass Spray Bottles (500 ml)',
+        'Safe storage for diluted vinegar glass spray and fabric mists',
+        'View on Amazon.es',
+      ),
+      makeGearItem(
+        'teaInfuser',
+        'Fine-Mesh Stainless Tea Infuser',
+        'Steeping fresh ginger slices and dried chamomile cleanly',
+        'View on Amazon.es',
+      ),
+      makeGearItem(
+        'aloeGel',
+        'Pure Unscented Aloe Vera Gel',
+        'Alcohol-free soothing gel for mild sun warmth and razor irritation',
+        'View on Amazon.es',
+      ),
+      makeGearItem(
+        'citricAcid',
+        'Food-Grade Citric Acid & Baking Soda',
+        'Odorless kettle descaling and gentle burnt-pan soaking',
+        'View on Amazon.es',
+      ),
+      makeGearItem(
+        'microfiber',
+        'Lint-Free Microfiber Cloths',
+        'Streak-free mirror buffing and gentle stain blotting',
+        'View on Amazon.es',
+      ),
     ],
   },
 
@@ -307,7 +324,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     gearHeading: 'Básicos Reutilizables para Botiquín Casero y Limpieza',
     gearSubheading:
       'Envases e ingredientes estables que facilitan diluciones seguras, infusiones y cuidado de superficies.',
-    gearDisclosure: 'Enlaces de afiliado (rel="sponsored nofollow noopener") ayudan a mantener estas guías.',
+    gearDisclosure:
+      'Aviso legal de afiliados: En calidad de Afiliado de Amazon España (amazon.es, tag=bastelar-21), obtenemos ingresos por las compras adscritas que cumplen los requisitos aplicables, sin coste adicional para ti.',
+    contextualGearTitle: 'Utensilios recomendados para esta guía (Amazon.es)',
     editorialTitle: 'Guía Editorial de Seguridad y Compatibilidad en el Hogar',
     editorialSubtitle:
       'Criterios responsables para bienestar leve cotidiano y limpieza doméstica sin mezclas reactivas ni riesgos.',
@@ -393,36 +412,36 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'Hielo / Agua',
     },
     gearItems: [
-      {
-        name: 'Pulverizadores de Vidrio Ámbar (500 ml)',
-        useCase: 'Para guardar diluciones limpiacristales y brumas textiles sin plásticos',
-        cta: 'Ver opción',
-        href: GEAR_BASE_LINKS.amberBottles,
-      },
-      {
-        name: 'Infusor de Acero Inoxidable Malla Fina',
-        useCase: 'Preparar infusiones limpias de jengibre fresco y manzanilla',
-        cta: 'Ver opción',
-        href: GEAR_BASE_LINKS.teaInfuser,
-      },
-      {
-        name: 'Gel Puro de Aloe Vera sin Alcohol',
-        useCase: 'Calma piel tras exposición solar leve o irritación por rasurado',
-        cta: 'Ver opción',
-        href: GEAR_BASE_LINKS.aloeGel,
-      },
-      {
-        name: 'Ácido Cítrico y Bicarbonato de Grado Hogar',
-        useCase: 'Desincrustado sin olor fuerte y remojo suave de ollas quemadas',
-        cta: 'Ver opción',
-        href: GEAR_BASE_LINKS.citricAcid,
-      },
-      {
-        name: 'Paños de Microfibra Sin Pelusa',
-        useCase: 'Secado de cristales sin marcas y absorción suave de manchas',
-        cta: 'Ver opción',
-        href: GEAR_BASE_LINKS.microfiber,
-      },
+      makeGearItem(
+        'amberBottles',
+        'Pulverizadores de Vidrio Ámbar (500 ml)',
+        'Para guardar diluciones limpiacristales y brumas textiles sin plásticos',
+        'Ver en Amazon.es',
+      ),
+      makeGearItem(
+        'teaInfuser',
+        'Infusor de Acero Inoxidable Malla Fina',
+        'Preparar infusiones limpias de jengibre fresco y manzanilla',
+        'Ver en Amazon.es',
+      ),
+      makeGearItem(
+        'aloeGel',
+        'Gel Puro de Aloe Vera sin Alcohol',
+        'Calma piel tras exposición solar leve o irritación por rasurado',
+        'Ver en Amazon.es',
+      ),
+      makeGearItem(
+        'citricAcid',
+        'Ácido Cítrico y Bicarbonato de Grado Hogar',
+        'Desincrustado sin olor fuerte y remojo suave de ollas quemadas',
+        'Ver en Amazon.es',
+      ),
+      makeGearItem(
+        'microfiber',
+        'Paños de Microfibra Sin Pelusa',
+        'Secado de cristales sin marcas y absorción suave de manchas',
+        'Ver en Amazon.es',
+      ),
     ],
   },
 
@@ -477,7 +496,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: 'Étapes détaillées affichées en langue de référence internationale avec ingrédients localisés.',
     gearHeading: 'Essentiels réutilisables pour la maison',
     gearSubheading: 'Flacons en verre, infuseurs et agents minéraux simples pour dosages précis.',
-    gearDisclosure: 'Liens affiliés (rel="sponsored nofollow noopener").',
+    gearDisclosure:
+      'Mention légale d’affiliation : En tant que Partenaire Amazon Espagne (amazon.es, tag=bastelar-21), nous percevons une rémunération sur les achats éligibles, sans surcoût pour vous.',
+    contextualGearTitle: 'Outils réutilisables recommandés (Amazon.es)',
     editorialTitle: 'Guide de sécurité et de compatibilité domestique',
     editorialSubtitle: 'Règles responsables pour le confort quotidien léger et l’entretien sans mélanges dangereux.',
     safetyCriteriaTitle: '1. Critères de sécurité bien-être',
@@ -544,11 +565,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'Glace / Eau',
     },
     gearItems: [
-      {name: 'Flacons pulvérisateurs en verre ambré', useCase: 'Dilutions ménagères durables', cta: 'Voir', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'Infuseur à thé inox maille fine', useCase: 'Tisanes gingembre et camomille', cta: 'Voir', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: 'Gel pur d’Aloe Vera sans alcool', useCase: 'Apaisement cutané léger', cta: 'Voir', href: GEAR_BASE_LINKS.aloeGel},
-      {name: 'Acide citrique et bicarbonate', useCase: 'Détartrage et casseroles', cta: 'Voir', href: GEAR_BASE_LINKS.citricAcid},
-      {name: 'Chiffons microfibres sans peluches', useCase: 'Vitres sans traces', cta: 'Voir', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', 'Flacons pulvérisateurs en verre ambré', 'Dilutions ménagères durables', 'Voir sur Amazon.es'),
+      makeGearItem('teaInfuser', 'Infuseur à thé inox maille fine', 'Tisanes gingembre et camomille', 'Voir sur Amazon.es'),
+      makeGearItem('aloeGel', 'Gel pur d’Aloe Vera sans alcool', 'Apaisement cutané léger', 'Voir sur Amazon.es'),
+      makeGearItem('citricAcid', 'Acide citrique et bicarbonate', 'Détartrage et casseroles', 'Voir sur Amazon.es'),
+      makeGearItem('microfiber', 'Chiffons microfibres sans peluches', 'Vitres sans traces', 'Voir sur Amazon.es'),
     ],
   },
 
@@ -603,7 +624,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: 'Detaillierte Einzelschritte in englischer Referenz mit lokalisierten Zutatenangaben.',
     gearHeading: 'Nützliche Haushalts- & Vorratshelfer',
     gearSubheading: 'Wiederverwendbare Glasflaschen, Teesiebe und milde Mineralpulver.',
-    gearDisclosure: 'Partnerlinks (rel="sponsored nofollow noopener").',
+    gearDisclosure:
+      'Affiliate-Hinweis: Als Partner von Amazon Spanien (amazon.es, tag=bastelar-21) verdienen wir an qualifizierten Käufen ohne Mehrkosten für Sie.',
+    contextualGearTitle: 'Empfohlene Hilfsmittel (Amazon.es)',
     editorialTitle: 'Sicherheits- und Materialverträglichkeits-Leitfaden',
     editorialSubtitle: 'Verantwortungsvolle Regeln für milde Hausmittel und sichere Reinigung ohne gefährliche Reaktionen.',
     safetyCriteriaTitle: '1. Kriterien für sichere Alltagsmittel',
@@ -670,11 +693,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'Eis / Wasser',
     },
     gearItems: [
-      {name: 'Braunglas-Sprühflaschen (500 ml)', useCase: 'Sichere Essig-Wasser-Mischungen', cta: 'Ansehen', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'Edelstahl-Teesieb feinmaschig', useCase: 'Für frischen Ingwer und Kamille', cta: 'Ansehen', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: 'Reines Aloe-Vera-Gel ohne Alkohol', useCase: 'Kühlende Hautpflege', cta: 'Ansehen', href: GEAR_BASE_LINKS.aloeGel},
-      {name: 'Zitronensäure & Natron', useCase: 'Geruchsfreies Entkalken', cta: 'Ansehen', href: GEAR_BASE_LINKS.citricAcid},
-      {name: 'Fusselfreie Mikrofasertücher', useCase: 'Streifenfreie Glasreinigung', cta: 'Ansehen', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', 'Braunglas-Sprühflaschen (500 ml)', 'Sichere Essig-Wasser-Mischungen', 'Bei Amazon.es ansehen'),
+      makeGearItem('teaInfuser', 'Edelstahl-Teesieb feinmaschig', 'Für frischen Ingwer und Kamille', 'Bei Amazon.es ansehen'),
+      makeGearItem('aloeGel', 'Reines Aloe-Vera-Gel ohne Alkohol', 'Kühlende Hautpflege', 'Bei Amazon.es ansehen'),
+      makeGearItem('citricAcid', 'Zitronensäure & Natron', 'Geruchsfreies Entkalken', 'Bei Amazon.es ansehen'),
+      makeGearItem('microfiber', 'Fusselfreie Mikrofasertücher', 'Streifenfreie Glasreinigung', 'Bei Amazon.es ansehen'),
     ],
   },
 
@@ -729,7 +752,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: 'Passos detalhados exibidos em idioma de referência com ingredientes traduzidos.',
     gearHeading: 'Itens Práticos para Casa e Preparos Naturais',
     gearSubheading: 'Frascos de vidro âmbar, infusores e minerais básicos para diluições seguras.',
-    gearDisclosure: 'Links de afiliado (rel="sponsored nofollow noopener").',
+    gearDisclosure:
+      'Aviso de afiliados: Como Associado da Amazon Espanha (amazon.es, tag=bastelar-21), recebemos comissões por compras qualificadas sem custo extra para você.',
+    contextualGearTitle: 'Utensílios recomendados (Amazon.es)',
     editorialTitle: 'Guia de Segurança e Compatibilidade Doméstica',
     editorialSubtitle: 'Boas práticas para conforto leve e limpeza sem misturas químicas perigosas.',
     safetyCriteriaTitle: '1. Critérios para bem-estar leve em casa',
@@ -796,11 +821,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'Gelo / Água',
     },
     gearItems: [
-      {name: 'Frascos spray de vidro âmbar', useCase: 'Armazenamento seguro de diluições', cta: 'Ver opção', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'Infusor de chá em aço inox', useCase: 'Chás de gengibre e camomila', cta: 'Ver opção', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: 'Gel puro de Aloe Vera', useCase: 'Alívio leve pós-sol', cta: 'Ver opção', href: GEAR_BASE_LINKS.aloeGel},
-      {name: 'Ácido cítrico e bicarbonato', useCase: 'Remoção de calcário e panelas', cta: 'Ver opção', href: GEAR_BASE_LINKS.citricAcid},
-      {name: 'Panos de microfibra sem fiapos', useCase: 'Vidros sem manchas', cta: 'Ver opção', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', 'Frascos spray de vidro âmbar', 'Armazenamento seguro de diluições', 'Ver na Amazon.es'),
+      makeGearItem('teaInfuser', 'Infusor de chá em aço inox', 'Chás de gengibre e camomila', 'Ver na Amazon.es'),
+      makeGearItem('aloeGel', 'Gel puro de Aloe Vera', 'Alívio leve pós-sol', 'Ver na Amazon.es'),
+      makeGearItem('citricAcid', 'Ácido cítrico e bicarbonato', 'Remoção de calcário e panelas', 'Ver na Amazon.es'),
+      makeGearItem('microfiber', 'Panos de microfibra sem fiapos', 'Vidros sem manchas', 'Ver na Amazon.es'),
     ],
   },
 
@@ -855,7 +880,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: 'تُعرض الخطوات التفصيلية باللغة المرجعية مع ترجمة المكونات والعناوين.',
     gearHeading: 'أدوات عملية للعناية المنزلية',
     gearSubheading: 'عبوات زجاجية ومصافي شاي ومواد تنظيف لطيفة لسهولة التحضير.',
-    gearDisclosure: 'روابط إعلانية (rel="sponsored nofollow noopener").',
+    gearDisclosure:
+      'إفصاح الشراكة: بصفتنا شريكًا لبرنامج Amazon إسبانيا (amazon.es, tag=bastelar-21)، نحصل على عمولة من المشتريات المؤهلة دون أي تكلفة إضافية عليك.',
+    contextualGearTitle: 'أدوات مقترحة لهذا الدليل (Amazon.es)',
     editorialTitle: 'دليل السلامة وتوافق المواد المنزلية',
     editorialSubtitle: 'معايير مسؤولة للراحة اليومية الخفيفة والتنظيف الآمن دون تفاعلات خطرة.',
     safetyCriteriaTitle: '1. معايير الاستخدام الآمن للعناية الخفيفة',
@@ -922,11 +949,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'ثلج / ماء',
     },
     gearItems: [
-      {name: 'بخاخات زجاجية كهرمانية', useCase: 'تخزين آمن للمحاليل المخففة', cta: 'عرض', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'مصفاة شاي ستانلس ناعمة', useCase: 'تحضير شاي الزنجبيل والبابونج', cta: 'عرض', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: 'جل ألوفيرا نقي', useCase: 'تهدئة البشرة بعد الشمس', cta: 'عرض', href: GEAR_BASE_LINKS.aloeGel},
-      {name: 'حمض الستريك وصودا الخبز', useCase: 'إزالة الكلس وتنظيف الأواني', cta: 'عرض', href: GEAR_BASE_LINKS.citricAcid},
-      {name: 'فوط مايكروفايبر خالية من الوبر', useCase: 'تلميع الزجاج دون خطوط', cta: 'عرض', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', 'بخاخات زجاجية كهرمانية', 'تخزين آمن للمحاليل المخففة', 'عرض في Amazon.es'),
+      makeGearItem('teaInfuser', 'مصفاة شاي ستانلس ناعمة', 'تحضير شاي الزنجبيل والبابونج', 'عرض في Amazon.es'),
+      makeGearItem('aloeGel', 'جل ألوفيرا نقي', 'تهدئة البشرة بعد الشمس', 'عرض في Amazon.es'),
+      makeGearItem('citricAcid', 'حمض الستريك وصودا الخبز', 'إزالة الكلس وتنظيف الأواني', 'عرض في Amazon.es'),
+      makeGearItem('microfiber', 'فوط مايكروفايبر خالية من الوبر', 'تلميع الزجاج دون خطوط', 'عرض في Amazon.es'),
     ],
   },
 
@@ -981,7 +1008,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: 'विस्तृत चरण अंतर्राष्ट्रीय संदर्भ पाठ में और सामग्री व शीर्षक स्थानीय भाषा में दिखाए गए हैं।',
     gearHeading: 'घरेलू देखभाल के उपयोगी उपकरण',
     gearSubheading: 'सुरक्षित घोल और हर्बल इन्फ्यूजन के लिए टिकाऊ बोतलें व सामग्री।',
-    gearDisclosure: 'संबद्ध लिंक (rel="sponsored nofollow noopener")।',
+    gearDisclosure:
+      'सहबद्ध प्रकटीकरण: Amazon स्पेन (amazon.es, tag=bastelar-21) के भागीदार के रूप में, हमें बिना किसी अतिरिक्त लागत के योग्य खरीदारी से आय प्राप्त होती है।',
+    contextualGearTitle: 'उपयोगी घरेलू उपकरण (Amazon.es)',
     editorialTitle: 'सुरक्षित घरेलू उपाय और सतह संगतता गाइड',
     editorialSubtitle: 'हल्के दैनिक आराम और सुरक्षित घरेलू सफाई के लिए जिम्मेदार नियम।',
     safetyCriteriaTitle: '1. हल्के स्वास्थ्य उपायों के सुरक्षा नियम',
@@ -1048,11 +1077,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'बर्फ / पानी',
     },
     gearItems: [
-      {name: 'एम्बर ग्लास स्प्रे बोतल', useCase: 'घरेलू स्प्रे का सुरक्षित भंडारण', cta: 'देखें', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'स्टेनलेस टी इन्फ्यूज़र', useCase: 'अदरक और कैमोमाइल चाय छानने के लिए', cta: 'देखें', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: 'शुद्ध एलोवेरा जेल', useCase: 'हल्की धूप या जलन में राहत', cta: 'देखें', href: GEAR_BASE_LINKS.aloeGel},
-      {name: 'साइट्रिक एसिड और बेकिंग सोडा', useCase: 'केतली और पैन की सफाई', cta: 'देखें', href: GEAR_BASE_LINKS.citricAcid},
-      {name: 'माइक्रोफाइबर कपड़े', useCase: 'बिना निशान के कांच की सफाई', cta: 'देखें', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', 'एम्बर ग्लास स्प्रे बोतल', 'घरेलू स्प्रे का सुरक्षित भंडारण', 'Amazon.es पर देखें'),
+      makeGearItem('teaInfuser', 'स्टेनलेस टी इन्फ्यूज़र', 'अदरक और कैमोमाइल चाय छानने के लिए', 'Amazon.es पर देखें'),
+      makeGearItem('aloeGel', 'शुद्ध एलोवेरा जेल', 'हल्की धूप या जलन में राहत', 'Amazon.es पर देखें'),
+      makeGearItem('citricAcid', 'साइट्रिक एसिड और बेकिंग सोडा', 'केतली और पैन की सफाई', 'Amazon.es पर देखें'),
+      makeGearItem('microfiber', 'माइक्रोफाइबर कपड़े', 'बिना निशान के कांच की सफाई', 'Amazon.es पर देखें'),
     ],
   },
 
@@ -1107,7 +1136,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: 'Подробные шаги показаны на международном языке с переведенными ингредиентами и заголовками.',
     gearHeading: 'Полезные принадлежности для дома',
     gearSubheading: 'Стеклянные распылители, ситечки и базовые средства для безопасных растворов.',
-    gearDisclosure: 'Партнерские ссылки (rel="sponsored nofollow noopener").',
+    gearDisclosure:
+      'Раскрытие информации: как участник партнерской программы Amazon Испания (amazon.es, tag=bastelar-21), сайт получает комиссию с подходящих покупок без доплаты для вас.',
+    contextualGearTitle: 'Полезные принадлежности для этого руководства (Amazon.es)',
     editorialTitle: 'Руководство по безопасности и совместимости материалов',
     editorialSubtitle: 'Ответственные правила для легкого бытового комфорта и безопасной уборки.',
     safetyCriteriaTitle: '1. Критерии безопасного ухода',
@@ -1174,11 +1205,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: 'Лёд / Вода',
     },
     gearItems: [
-      {name: 'Стеклянные спрей-флаконы (500 мл)', useCase: 'Хранение растворов без пластика', cta: 'Смотреть', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'Металлическое ситечко для чая', useCase: 'Настои имбиря и ромашки', cta: 'Смотреть', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: 'Чистый гель алоэ вера', useCase: 'Успокоение кожи после солнца', cta: 'Смотреть', href: GEAR_BASE_LINKS.aloeGel},
-      {name: 'Лимонная кислота и сода', useCase: 'Удаление накипи и нагара', cta: 'Смотреть', href: GEAR_BASE_LINKS.citricAcid},
-      {name: 'Салфетки из микрофибры', useCase: 'Мытье стекол без разводов', cta: 'Смотреть', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', 'Стеклянные спрей-флаконы (500 мл)', 'Хранение растворов без пластика', 'На Amazon.es'),
+      makeGearItem('teaInfuser', 'Металлическое ситечко для чая', 'Настои имбиря и ромашки', 'На Amazon.es'),
+      makeGearItem('aloeGel', 'Чистый гель алоэ вера', 'Успокоение кожи после солнца', 'На Amazon.es'),
+      makeGearItem('citricAcid', 'Лимонная кислота и сода', 'Удаление накипи и нагара', 'На Amazon.es'),
+      makeGearItem('microfiber', 'Салфетки из микрофибры', 'Мытье стекол без разводов', 'На Amazon.es'),
     ],
   },
 
@@ -1233,7 +1264,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: '详细步骤以国际参考文本显示，标题、摘要与原料已本地化。',
     gearHeading: '居家调制与清洁实用工具',
     gearSubheading: '琥珀玻璃喷瓶、茶滤与基础矿物粉末，让稀释与收纳更安全省心。',
-    gearDisclosure: '联盟推荐链接 (rel="sponsored nofollow noopener")。',
+    gearDisclosure:
+      '联盟披露：作为亚马逊西班牙（amazon.es，tag=bastelar-21）联盟成员，我们通过符合条件的购买获得佣金，您无需支付额外费用。',
+    contextualGearTitle: '本指南推荐实用工具（Amazon.es）',
     editorialTitle: '居家安全准则与材质兼容指南',
     editorialSubtitle: '适用于日常轻微不适与无害居家清洁的责任原则。',
     safetyCriteriaTitle: '1. 日常舒缓方案安全标准',
@@ -1300,11 +1333,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: '冰块 / 清水',
     },
     gearItems: [
-      {name: '琥珀色玻璃喷雾瓶 (500 ml)', useCase: '安全分装稀释白醋与玻璃清洁液', cta: '查看', href: GEAR_BASE_LINKS.amberBottles},
-      {name: '细目不锈钢茶漏', useCase: '冲泡鲜姜片与洋甘菊花茶', cta: '查看', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: '无酒精纯芦荟胶', useCase: '日晒后与剃须后轻度舒缓', cta: '查看', href: GEAR_BASE_LINKS.aloeGel},
-      {name: '食品级柠檬酸与小苏打', useCase: '无异味水壶除垢与焦锅浸泡', cta: '查看', href: GEAR_BASE_LINKS.citricAcid},
-      {name: '无绒超细纤维抹布', useCase: '玻璃无痕擦拭与轻拍吸渍', cta: '查看', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', '琥珀色玻璃喷雾瓶 (500 ml)', '安全分装稀释白醋与玻璃清洁液', '在 Amazon.es 查看'),
+      makeGearItem('teaInfuser', '细目不锈钢茶漏', '冲泡鲜姜片与洋甘菊花茶', '在 Amazon.es 查看'),
+      makeGearItem('aloeGel', '无酒精纯芦荟胶', '日晒后与剃须后轻度舒缓', '在 Amazon.es 查看'),
+      makeGearItem('citricAcid', '食品级柠檬酸与小苏打', '无异味水壶除垢与焦锅浸泡', '在 Amazon.es 查看'),
+      makeGearItem('microfiber', '无绒超细纤维抹布', '玻璃无痕擦拭与轻拍吸渍', '在 Amazon.es 查看'),
     ],
   },
 
@@ -1359,7 +1392,9 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
     stepReferenceNote: '詳細手順は国際参照テキストで表示され、見出し・概要・材料は日本語で案内しています。',
     gearHeading: '暮らしのケアと掃除に役立つ定番アイテム',
     gearSubheading: '安全な希釈やハーブ抽出に便利なガラス容器・ツール。',
-    gearDisclosure: 'アフィリエイトリンク (rel="sponsored nofollow noopener")。',
+    gearDisclosure:
+      'アフィリエイト開示：Amazonスペイン（amazon.es、tag=bastelar-21）のアソシエイトとして、適格販売により収入を得ています（追加費用はかかりません）。',
+    contextualGearTitle: 'このガイドにおすすめの道具（Amazon.es）',
     editorialTitle: '家庭ケアの安全性と素材相性ガイド',
     editorialSubtitle: '軽度な不調への配慮と、危険な混合を避けるための基本ルール。',
     safetyCriteriaTitle: '1. 日常ケアの安全基準',
@@ -1426,11 +1461,11 @@ export const UI_DICTIONARY: Record<LangCode, UiDictionary> = {
       ice_water: '氷 / 水',
     },
     gearItems: [
-      {name: '遮光アンバーガラススプレーボトル', useCase: '希釈スプレーの安全な保管', cta: '詳細', href: GEAR_BASE_LINKS.amberBottles},
-      {name: 'ステンレス茶こしインフューザー', useCase: 'ショウガやカモミールの抽出', cta: '詳細', href: GEAR_BASE_LINKS.teaInfuser},
-      {name: '無香料ピュアアロエベラジェル', useCase: '日焼け後のやさしい保湿ケア', cta: '詳細', href: GEAR_BASE_LINKS.aloeGel},
-      {name: '食品グレードのクエン酸・重曹', useCase: 'ケトルの水垢と鍋の焦げ落とし', cta: '詳細', href: GEAR_BASE_LINKS.citricAcid},
-      {name: '糸くずの出ないマイクロファイバー', useCase: '跡が残らない窓拭きとシミ取り', cta: '詳細', href: GEAR_BASE_LINKS.microfiber},
+      makeGearItem('amberBottles', '遮光アンバーガラススプレーボトル', '希釈スプレーの安全な保管', 'Amazon.es で見る'),
+      makeGearItem('teaInfuser', 'ステンレス茶こしインフューザー', 'ショウガやカモミールの抽出', 'Amazon.es で見る'),
+      makeGearItem('aloeGel', '無香料ピュアアロエベラジェル', '日焼け後のやさしい保湿ケア', 'Amazon.es で見る'),
+      makeGearItem('citricAcid', '食品グレードのクエン酸・重曹', 'ケトルの水垢と鍋の焦げ落とし', 'Amazon.es で見る'),
+      makeGearItem('microfiber', '糸くずの出ないマイクロファイバー', '跡が残らない窓拭きとシミ取り', 'Amazon.es で見る'),
     ],
   },
 };
